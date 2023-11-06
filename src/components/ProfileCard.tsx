@@ -7,13 +7,17 @@ type Props = OwnProps;
 
 const ProfileCard: FunctionComponent<Props> = () => {
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} style={{ marginTop: "10px", border: "2px" }}>
       <Grid item xs={12} sm={4}>
         <Avatar alt="description" src="" />
       </Grid>
       <Grid item xs={12} sm={8}>
         <Typography>
-          Name: <span> Ndimbigwe Jovia</span>
+          Name:{" "}
+          <span style={{ justifyContent: "space-between" }}>
+            {" "}
+            Ndimbigwe Jovia
+          </span>
         </Typography>
         <Typography>
           Age: <span> 62</span>
