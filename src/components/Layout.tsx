@@ -15,7 +15,7 @@ const Layout: FunctionComponent<LayoutProps> = ({ children }) => {
       <Grid
         item
         xs={12}
-        style={{ display: "flex", marginTop: "10px", padding: "0 80px" }}
+        style={{ display: "flex", marginTop: "15px", padding: "0 80px" }}
       >
         {children}
       </Grid>

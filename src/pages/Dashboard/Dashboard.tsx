@@ -1,49 +1,86 @@
-import { FunctionComponent, useEffect, useState } from "react";
-import { Grid, Card, CardContent, Typography, TextField } from "@mui/material";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import { Card, CardContent, Grid, TextField, Typography } from "@mui/material";
 import ProfileCard from "../../components/ProfileCard.tsx";
-import GoogleMap from "google-map-react";
-import useFetch from "../../hooks/useFetch.ts";
+import useGeoJsonData from "../../hooks/useGeoJsonData.ts";
+import {
+  GoogleMapsProvider,
+  useGoogleMap,
+} from "@ubilabs/google-maps-react-hooks";
+import { MarkerClusterer } from "@googlemaps/markerclusterer";
+import SuperClusterAlgorithm from "../../utils/superClusterAlgorithm.ts";
 
-const googleapikey = import.meta.env.GOOGLE_API_KEY;
-
+const defaultProps = {
+  center: {
+    lat: 0.312898,
+    lng: 32.582599,
+  },
+  zoom: 10,
+};
 interface DashboardProps {}
 
 const Dashboard: FunctionComponent<DashboardProps> = () => {
-    const {data, loading} =  useFetch();
-    const [geoData, setGeoData] = useState<any[]>([]);
+  const { data } = useGeoJsonData();
+  const googleMap: any = useGoogleMap();
+  const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>(null);
 
-    useEffect(() => {
-        if(!loading && data){
-            setGeoData(() => data.map(result => {
-                return [...result, 89899]
-            }))
-        }
+  const onLoad = useCallback((map: any) => addMarkers(map), []);
 
-    }, [data, loading]);
+  const addMarkers = (map: any) => {
+    const infoWindow = googleMap.infoWindow();
+    const markers = data.map(() => {
+      const marker = googleMap.Marker({
+        position: { lat: 1.3733, lng: 32.2903 },
+      });
+      marker.addListener("click", () => {
+        infoWindow.setPosition({ lat: 1.3733, lng: 32.2903 });
+        infoWindow.setContent(`
+        <div class="info-window">
+          <h2>Test</h2>
+        </div>
+      `);
+        infoWindow.open({ map });
+      });
+      return marker;
+    });
 
-
-  const defaultProps = {
-    center: {
-      lat: 1.3733,
-      lng: 32.2903,
-    },
-    zoom: 15,
+    new MarkerClusterer({
+      markers,
+      map,
+      algorithm: new SuperClusterAlgorithm({ radius: 200 }),
+    });
   };
 
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} sm={8}>
-        <div style={{ height: "100vh", width: "100%" }}>
-          <GoogleMap
-            bootstrapURLKeys={{
-              key: googleapikey,
-              libraries: ["drawing", "geometry", "places"],
-            }}
-            defaultCenter={defaultProps.center}
-            yesIWantToUseGoogleMapApiInternals
-            defaultZoom={defaultProps.zoom}
-          />
-        </div>
+        <Card sx={{ minWidth: 275 }}>
+          <CardContent>
+            <div style={{ height: "80vh", width: "100%" }}>
+              <GoogleMapsProvider
+                googleMapsAPIKey={"AIzaSyBd9OeEy1OrAMs-m6rdgr03rg0Dwgkv7mE"}
+                mapOptions={defaultProps}
+                mapContainer={mapContainer}
+                onLoadMap={onLoad}
+              >
+                <React.StrictMode>
+                  <div
+                    ref={(node) => setMapContainer(node)}
+                    style={{ height: "80vh", width: "100%" }}
+                  />
+                </React.StrictMode>
+              </GoogleMapsProvider>
+              {/*<GoogleMap*/}
+              {/*  bootstrapURLKeys={{*/}
+              {/*    key: googleapikey,*/}
+              {/*    libraries: ["drawing", "geometry", "places"],*/}
+              {/*  }}*/}
+              {/*  defaultCenter={defaultProps.center}*/}
+              {/*  yesIWantToUseGoogleMapApiInternals*/}
+              {/*  defaultZoom={defaultProps.zoom}*/}
+              {/*/>*/}
+            </div>
+          </CardContent>
+        </Card>
       </Grid>
       <Grid item xs={12} sm={4}>
         <Card sx={{ minWidth: 275 }}>
