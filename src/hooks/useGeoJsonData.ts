@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import readXlsxFile from "read-excel-file";
-import { fromAddress, setKey } from "react-geocode";
+import { geocode, RequestType, setKey } from "react-geocode";
+
 const useGeoJsonData = () => {
   const [geoJsonData, setGeoJsonData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -8,7 +9,7 @@ const useGeoJsonData = () => {
 
   setKey("AIzaSyBd9OeEy1OrAMs-m6rdgr03rg0Dwgkv7mE");
   const getAddress = async (address: string) => {
-    return fromAddress(address).then(({ results }) => {
+    return geocode(RequestType.ADDRESS, address).then(({ results }) => {
       return results[0].geometry.location;
     });
   };

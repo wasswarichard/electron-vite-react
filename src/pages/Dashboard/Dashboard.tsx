@@ -1,65 +1,48 @@
-import React, {
-  FunctionComponent,
-  useCallback,
-  useState,
-  useEffect,
-} from "react";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import { Card, CardContent, Grid, TextField, Typography } from "@mui/material";
 import ProfileCard from "../../components/ProfileCard.tsx";
 import useGeoJsonData from "../../hooks/useGeoJsonData.ts";
-import {
-  GoogleMapsProvider,
-  useGoogleMap,
-} from "@ubilabs/google-maps-react-hooks";
+import { GoogleMapsProvider } from "@ubilabs/google-maps-react-hooks";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
-import SuperClusterAlgorithm from "../../utils/superClusterAlgorithm.ts";
 
-const defaultProps = {
+const mapOptions = {
   center: {
-    lat: 0.312898,
-    lng: 32.582599,
+    lat: -1.2493132474566497,
+    lng: 30.08346266342027,
   },
-  zoom: 10,
+  zoom: 12,
 };
 interface DashboardProps {}
 
 const Dashboard: FunctionComponent<DashboardProps> = () => {
   const { geoJsonData } = useGeoJsonData();
-  const [data, setData] = useState<any[]>([]);
-
-  const googleMap: any = useGoogleMap();
   const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>(null);
+  const onLoad = useCallback(
+    (map: any) => addMarkers(map, geoJsonData),
+    [geoJsonData],
+  );
 
-  const onLoad = useCallback((map: any) => addMarkers(map), []);
-
-  useEffect(() => {
-    if (geoJsonData.length > 0) {
-      setData(geoJsonData);
-    }
-  }, [geoJsonData]);
-
-  const addMarkers = (map: any) => {
-    const infoWindow = googleMap.infoWindow();
-    const markers = data.map(() => {
-      const marker = googleMap.Marker({
-        position: { lat: 1.3733, lng: 32.2903 },
-      });
+  const addMarkers = (map: any, payload: any[]) => {
+    const infoWindow = new google.maps.InfoWindow();
+    const markers = payload.map((result) => {
+      const lat = result[10];
+      const lng = result[11];
+      const name = result[0];
+      const marker = new google.maps.Marker({ position: { lat, lng } });
       marker.addListener("click", () => {
-        infoWindow.setPosition({ lat: 1.3733, lng: 32.2903 });
+        infoWindow.setPosition({ lat, lng });
         infoWindow.setContent(`
         <div class="info-window">
-          <h2>Test</h2>
+          <h2>${name}</h2>
         </div>
       `);
         infoWindow.open({ map });
       });
       return marker;
     });
-
     new MarkerClusterer({
       markers,
       map,
-      algorithm: new SuperClusterAlgorithm({ radius: 200 }),
     });
   };
 
@@ -71,9 +54,9 @@ const Dashboard: FunctionComponent<DashboardProps> = () => {
             <div style={{ height: "80vh", width: "100%" }}>
               <GoogleMapsProvider
                 googleMapsAPIKey={"AIzaSyBd9OeEy1OrAMs-m6rdgr03rg0Dwgkv7mE"}
-                mapOptions={defaultProps}
+                mapOptions={mapOptions}
                 mapContainer={mapContainer}
-                onLoadMap={onLoad}
+                onLoadMap={(map) => onLoad(map)}
               >
                 <React.StrictMode>
                   <div
