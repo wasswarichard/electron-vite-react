@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import readXlsxFile from "read-excel-file";
 import { fromAddress, setKey } from "react-geocode";
 const useGeoJsonData = () => {
-  const [data, setData] = useState<any[]>([]);
+  const [geoJsonData, setGeoJsonData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState(null);
 
@@ -35,16 +35,12 @@ const useGeoJsonData = () => {
         (error) => setError(error),
       )
       .then((rows: any) => {
-        setData(formatData(rows));
+        setGeoJsonData(formatData(rows));
       })
       .finally(() => {
         setLoading(false);
       });
   }, []);
-  return {
-    data,
-    loading,
-    error,
-  };
+  return { geoJsonData, loading, error };
 };
 export default useGeoJsonData;

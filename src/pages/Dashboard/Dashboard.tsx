@@ -1,4 +1,9 @@
-import React, { FunctionComponent, useCallback, useState } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useState,
+  useEffect,
+} from "react";
 import { Card, CardContent, Grid, TextField, Typography } from "@mui/material";
 import ProfileCard from "../../components/ProfileCard.tsx";
 import useGeoJsonData from "../../hooks/useGeoJsonData.ts";
@@ -19,11 +24,19 @@ const defaultProps = {
 interface DashboardProps {}
 
 const Dashboard: FunctionComponent<DashboardProps> = () => {
-  const { data } = useGeoJsonData();
+  const { geoJsonData } = useGeoJsonData();
+  const [data, setData] = useState<any[]>([]);
+
   const googleMap: any = useGoogleMap();
   const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>(null);
 
   const onLoad = useCallback((map: any) => addMarkers(map), []);
+
+  useEffect(() => {
+    if (geoJsonData.length > 0) {
+      setData(geoJsonData);
+    }
+  }, [geoJsonData]);
 
   const addMarkers = (map: any) => {
     const infoWindow = googleMap.infoWindow();
@@ -69,15 +82,6 @@ const Dashboard: FunctionComponent<DashboardProps> = () => {
                   />
                 </React.StrictMode>
               </GoogleMapsProvider>
-              {/*<GoogleMap*/}
-              {/*  bootstrapURLKeys={{*/}
-              {/*    key: googleapikey,*/}
-              {/*    libraries: ["drawing", "geometry", "places"],*/}
-              {/*  }}*/}
-              {/*  defaultCenter={defaultProps.center}*/}
-              {/*  yesIWantToUseGoogleMapApiInternals*/}
-              {/*  defaultZoom={defaultProps.zoom}*/}
-              {/*/>*/}
             </div>
           </CardContent>
         </Card>
