@@ -24,10 +24,9 @@ const Dashboard: FunctionComponent<DashboardProps> = () => {
 
   const addMarkers = (map: any, payload: any[]) => {
     const infoWindow = new google.maps.InfoWindow();
-    const markers = payload.map((result) => {
-      const lat = result[10];
-      const lng = result[11];
-      const name = result[0];
+    const markers = payload.map(([name, ...rest]) => {
+      const lng = rest[rest.length - 1];
+      const lat = rest[rest.length - 2];
       const marker = new google.maps.Marker({ position: { lat, lng } });
       marker.addListener("click", () => {
         infoWindow.setPosition({ lat, lng });

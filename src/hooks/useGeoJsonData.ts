@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useMemo, useState} from "react";
 import readXlsxFile from "read-excel-file";
 import { geocode, RequestType, setKey } from "react-geocode";
 
@@ -20,14 +20,19 @@ const useGeoJsonData = () => {
       const location = `${item[8]} ${item[7]} ${item[6]} ${item[5]}`;
       const response = await getAddress(location);
       const data = [
-        ...item,
+        item[0],
+        item[1],
+        item[2],
+        item[3],
+        item[4],
+        location,
         ...Object.keys(response).map((key) => response[key]),
       ];
       mapsData.push(data);
     });
     return mapsData;
   };
-  useEffect(() => {
+  useMemo(() => {
     setLoading(true);
     fetch("/data.xlsx")
       .then((response) => response.blob())
