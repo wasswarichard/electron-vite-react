@@ -3,7 +3,7 @@ import { Card, CardContent, Grid, TextField, Typography } from "@mui/material";
 import ProfileCard from "../../components/ProfileCard.tsx";
 import { GoogleMapsProvider } from "@ubilabs/google-maps-react-hooks";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
-import geoJsonData from '../../data/trees.ts'
+import geoJsonData from "../../data/trees.ts";
 
 const mapOptions = {
   center: {

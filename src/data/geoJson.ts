@@ -1,7 +1,7 @@
-import {getGeoJsonData} from "../utils/geoJsonData.ts";
+import { getGeoJsonData } from "../utils/geoJsonData.ts";
 // var data;
 (async () => {
-    await getGeoJsonData()
-})()
+  await getGeoJsonData();
+})();
 
 // export default [...data,]
