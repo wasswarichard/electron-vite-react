@@ -1,19 +1,13 @@
-import { useEffect, useState } from "react";
-import readXlsxFile from "read-excel-file";
 import { geocode, RequestType, setKey } from "react-geocode";
+import readXlsxFile from "read-excel-file";
 
-const useGeoJsonData = () => {
-  const [geoJsonData, setGeoJsonData] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState(null);
-
+export const getGeoJsonData = async () => {
   setKey("AIzaSyBd9OeEy1OrAMs-m6rdgr03rg0Dwgkv7mE");
   const getAddress = async (address: string) => {
     return geocode(RequestType.ADDRESS, address).then(({ results }) => {
       return results[0].geometry.location;
     });
   };
-
   const formatData = (rows: any[]) => {
     const mapsData: any[][] = [];
     rows.forEach(async (item: any) => {
@@ -32,21 +26,9 @@ const useGeoJsonData = () => {
     });
     return mapsData;
   };
-  useEffect(() => {
-    setLoading(true);
-    fetch("/data.xlsx")
-      .then((response) => response.blob())
-      .then(
-        (blob) => readXlsxFile(blob),
-        (error) => setError(error),
-      )
-      .then((rows: any) => {
-        setGeoJsonData(formatData(rows));
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
-  return { geoJsonData, loading, error };
+
+  const response = await fetch("/data.xlsx");
+  const blob = await response.blob();
+  const rows = await readXlsxFile(blob);
+  return formatData(rows);
 };
-export default useGeoJsonData;

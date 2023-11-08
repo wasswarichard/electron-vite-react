@@ -1,9 +1,9 @@
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { Card, CardContent, Grid, TextField, Typography } from "@mui/material";
 import ProfileCard from "../../components/ProfileCard.tsx";
-import useGeoJsonData from "../../hooks/useGeoJsonData.ts";
 import { GoogleMapsProvider } from "@ubilabs/google-maps-react-hooks";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
+import geoJsonData from '../../data/trees.ts'
 
 const mapOptions = {
   center: {
@@ -15,7 +15,6 @@ const mapOptions = {
 interface DashboardProps {}
 
 const Dashboard: FunctionComponent<DashboardProps> = () => {
-  const { geoJsonData } = useGeoJsonData();
   const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>(null);
   const onLoad = useCallback(
     (map: any) => addMarkers(map, geoJsonData),
